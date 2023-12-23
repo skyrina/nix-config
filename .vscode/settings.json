@@ -1,0 +1,13 @@
+{
+	"nix.enableLanguageServer": true,
+	"nix.serverPath": "nil",
+	"nix.serverSettings": {
+		// settings for 'nixd' LSP
+		"nil": {
+			"formatting": {
+				"command": "nixpkgs-fmt"
+			}
+		}
+	},
+	"nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix"
+}
