@@ -1,0 +1,1 @@
+hosts/strawberry/keys/** filter=git-crypt diff=git-crypt
