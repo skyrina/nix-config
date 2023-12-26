@@ -18,6 +18,8 @@
     # ./stylix.nix
   ];
 
+  # TODO: move almost everything that's below this to other files this sucks really bad fix it please
+
   # this is dumb but really useful
   boot.initrd.network.enable = true;
   boot.initrd.availableKernelModules = ["igc"];
@@ -60,7 +62,7 @@
   };
 
   # fix for tf2
-  environment.systemPackages = with pkgs; [ pkgsi686Linux.gperftools ];
+  environment.systemPackages = with pkgs; [pkgsi686Linux.gperftools];
 
   services.openssh = {
     enable = true;
@@ -68,6 +70,11 @@
       PermitRootLogin = "prohibit-password";
       PasswordAuthentication = true;
     };
+  };
+
+  services.mullvad-vpn = {
+    enable = true;
+    package = pkgs.mullvad-vpn;
   };
 
   services.pipewire = {
@@ -84,6 +91,12 @@
   # for MTP
   services.gvfs.enable = true;
   services.udev.packages = [pkgs.heimdall];
+
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+    extraPortals = [pkgs.xdg-desktop-portal-gtk];
+  };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
