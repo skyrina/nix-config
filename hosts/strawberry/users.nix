@@ -22,7 +22,7 @@
       createHome = true;
       isNormalUser = true;
       description = "user";
-      shell = pkgs.zsh;
+      shell = pkgs.nushell;
       initialHashedPassword = "$y$j9T$JGcoTZJsNy.yFYApXisoV.$9IAQ7ItgOLJJM7wWuR1jXsVYjY3wuyJ2JckPDJCI0L.";
       openssh.authorizedKeys.keys = [
         me.pubkeys.laptop
