@@ -5,11 +5,8 @@
 }: {
   users.mutableUsers = false;
 
-  # TODO: figure out if these being here makes any difference than being in homes/strawberry
-  programs.zsh.enable = true;
+  # TODO: figure out if this being here makes any difference than being in homes/strawberry
   programs.dconf.enable = true;
-
-  virtualisation.docker.enable = true;
 
   users.users = {
     root = {
@@ -32,7 +29,7 @@
         me.pubkeys.phone
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = ["wheel" "networkmanager" "audio" "plugdev" "docker"];
+      extraGroups = ["wheel" "networkmanager" "audio" "plugdev"];
     };
   };
 }

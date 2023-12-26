@@ -7,7 +7,8 @@
 }: {
   imports = [
     inputs.nix-index-database.hmModules.nix-index
-    ../programs/zsh.nix
+    ../programs/nushell
+    ../programs/starship.nix
     ../programs/firefox
     ../programs/alacritty
     ./impermanence.nix
@@ -68,6 +69,9 @@
     enableZshIntegration = true;
     enableBashIntegration = true;
   };
+
+  # temp fix until https://github.com/nix-community/home-manager/issues/4804 is fixed
+  services.gpg-agent.pinentryFlavor = "qt";
 
   services.gnome-keyring.enable = true;
 

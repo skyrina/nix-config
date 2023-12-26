@@ -43,6 +43,7 @@
         ".cargo/registry"
 
         ".config/Code"
+        ".config/JetBrains"
         ".config/discord"
         ".config/zsh"
         ".config/VencordDesktop"
@@ -69,8 +70,7 @@
         }
       ];
       files = [
-        ".bash_history"
-        ".zsh_history"
+        ".local/share/nushell/history"
       ];
     };
   };
