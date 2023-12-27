@@ -22,6 +22,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    swayfx = {
+      url = "github:WillPower3309/swayfx";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     firefox.url = "github:nix-community/flake-firefox-nightly?rev=811fe9bc9d3cef657fb29fc32410e8211429398f";
 
     disko = {

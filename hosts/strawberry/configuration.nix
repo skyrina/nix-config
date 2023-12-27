@@ -61,6 +61,12 @@
     };
   };
 
+  security.polkit.enable = true;
+  programs.sway = {
+    enable = true;
+    package = null;
+  };
+
   # fix for tf2
   environment.systemPackages = with pkgs; [pkgsi686Linux.gperftools];
 

@@ -11,6 +11,7 @@
     ../programs/starship.nix
     ../programs/firefox
     ../programs/alacritty
+    ../programs/sway
     ./impermanence.nix
   ];
 
