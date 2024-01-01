@@ -11,7 +11,6 @@
     ../programs/starship.nix
     ../programs/firefox
     ../programs/alacritty
-    ./impermanence.nix
   ];
 
   nixpkgs = {
@@ -41,6 +40,7 @@
       rustup
       gcc
 
+      git-crypt
       ncdu
 
       wineWowPackages.stable
@@ -56,6 +56,7 @@
       prismlauncher
 
       blender
+      aseprite # TODO: make the config file declarative if they dont use shitty config files like kde plasma does
 
       noto-fonts
       noto-fonts-cjk-sans

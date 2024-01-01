@@ -23,7 +23,7 @@
     };
 
     firefox = {
-      url = "github:nix-community/flake-firefox-nightly?rev=811fe9bc9d3cef657fb29fc32410e8211429398f";
+      url = "github:nix-community/flake-firefox-nightly?rev=7628824d41a06bd7f656fb49c62227435866dbd2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
