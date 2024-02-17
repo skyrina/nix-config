@@ -4,8 +4,19 @@
 	"nix.serverSettings": {
 		"nil": {
 			"formatting": {
-				"command": ["nixpkgs-fmt"]
-			}
+				"command": [
+					"alejandra"
+				]
+			},
+			"nix": {
+				"binary": "nix",
+				"maxMemoryMB": null,
+				"flake": {
+					"autoArchive": null,
+					"autoEvalInputs": true,
+					"nixpkgsInputName": "nixpkgs",
+				},
+			},
 		}
 	}
 }

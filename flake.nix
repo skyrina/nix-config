@@ -3,12 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    # stable.url = "github:nixos/nixpkgs/nixos-23.05"; # FIXME?
-
-    nix-index-database = {
-      url = "github:Mic92/nix-index-database";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     impermanence.url = "github:nix-community/impermanence";
 
@@ -17,13 +11,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    stylix = {
-      url = "github:bluskript/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     firefox = {
-      url = "github:nix-community/flake-firefox-nightly?rev=7628824d41a06bd7f656fb49c62227435866dbd2";
+      url = "github:nix-community/flake-firefox-nightly?rev=34aa87ff6a3f23fd17cc901f5a19d061cc1c46b3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -37,6 +26,7 @@
     self,
     nixpkgs,
     home-manager,
+    plasma-manager,
     disko,
     ...
   } @ inputs: let
@@ -62,7 +52,12 @@
 
     # Your custom packages
     # Acessible through 'nix build', 'nix shell', etc
-    packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+    packages = forAllSystems (
+      system: let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in
+        import ./pkgs {inherit pkgs;}
+    );
     # Formatter for your nix files, available through 'nix fmt'
     # Other options beside 'alejandra' include 'nixpkgs-fmt'
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
@@ -89,8 +84,6 @@
         modules = [
           # > Our main nixos configuration file <
           disko.nixosModules.disko
-          # FIXME
-          # inputs.stylix.nixosModules.stylix
           (import ./hosts/strawberry/configuration.nix)
         ];
       };
@@ -101,7 +94,10 @@
     homeConfigurations = {
       "user@strawberry" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs;};
+        extraSpecialArgs = {
+          inherit inputs outputs;
+          me = import ./identities/user.nix;
+        };
         modules = [
           (import ./homes/strawberry)
         ];

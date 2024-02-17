@@ -28,7 +28,7 @@
         me.pubkeys.laptop
         me.pubkeys.phone
       ];
-      extraGroups = ["wheel" "networkmanager" "audio" "plugdev"];
+      extraGroups = ["wheel" "networkmanager" "audio" "plugdev" "docker" "libvirtd"];
     };
   };
 }

@@ -1,23 +1,21 @@
 {
-  inputs,
   outputs,
   nixosConfig,
   pkgs,
   ...
 }: {
   imports = [
-    inputs.nix-index-database.hmModules.nix-index
     ../programs/nushell
     ../programs/starship.nix
     ../programs/firefox
     ../programs/alacritty
+    ../programs/factorio
   ];
 
   nixpkgs = {
     overlays = [
       outputs.overlays.additions
       outputs.overlays.modifications
-      outputs.overlays.unstable-packages
     ];
     config = {
       allowUnfree = true;
@@ -35,6 +33,7 @@
         withVencord = true;
       })
       vesktop
+      cinny-desktop
 
       # TODO: figure out if having a global installation of rustup and gcc is bad
       rustup
@@ -45,8 +44,11 @@
 
       wineWowPackages.stable
 
+      qbittorrent
+
       vscode
       jetbrains.idea-community
+      jetbrains.datagrip
 
       (steam.override {
         # fix for tf2
@@ -56,7 +58,13 @@
       prismlauncher
 
       blender
-      aseprite # TODO: make the config file declarative if they dont use shitty config files like kde plasma does
+      aseprite # TODO: make the config file declarative
+      osu-lazer
+      keepassxc
+      r2modman
+      yubikey-personalization
+      yubikey-manager-qt
+      nix-output-monitor
 
       noto-fonts
       noto-fonts-cjk-sans
@@ -89,13 +97,17 @@
     lfs.enable = true;
   };
   programs.bash.enable = true;
-  programs.direnv.enable = true;
-
-  programs.nix-index-database.comma.enable = true;
-  programs.nix-index = {
+  programs.direnv = {
     enable = true;
-    enableBashIntegration = false;
-    enableZshIntegration = false;
+    nix-direnv.enable = true;
+    enableNushellIntegration = true;
+  };
+
+  dconf.settings = {
+    "org/virt-manager/virt-manager/connections" = {
+      autoconnect = ["qemu:///system"];
+      uris = ["qemu:///system"];
+    };
   };
 
   # nicely reload system units when changing configs

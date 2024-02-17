@@ -2,8 +2,8 @@
   programs.alacritty = {
     enable = true;
     settings = {
-      import = [./catppuccin-mocha.yaml];
-      size = 10;
+      import = [./catppuccin-mocha.toml];
+      font.size = 10;
     };
   };
 }
