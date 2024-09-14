@@ -15,13 +15,12 @@
       "/var/lib/nixos"
       "/var/lib/systemd/coredump"
       "/etc/NetworkManager/system-connections"
-
-      # no more annoying prompt upon running sudo after rebooting
+      "/var/lib/libvirt"
+      "/var/lib/docker"
       {
-        directory = "/var/db/sudo/lectured";
-        user = "root";
-        group = "root";
-        mode = "0700";
+        directory = "/var/lib/archisteamfarm";
+        user = "archisteamfarm";
+        group = "archisteamfarm";
       }
     ];
     files = [
@@ -41,15 +40,20 @@
         "Documents"
         "Videos"
 
+        "Monero"
+
         ".cache"
         ".mozilla/firefox/Default"
         ".vscode"
+        ".docker"
         ".gradle"
         ".wine"
         ".factorio"
         # TODO: figure out if having a global installation of rust is bad
         ".rustup"
         ".cargo/registry"
+        ".kube"
+        ".cloudflared"
 
         ".config/StardewValley"
         ".config/r2modman"
@@ -60,18 +64,32 @@
         ".config/discord"
         ".config/zsh"
         ".config/vesktop"
+        ".config/Element"
         ".config/blender"
         ".config/Yubico"
+        ".config/YouTube Music"
+        ".config/helm"
+        ".config/wlxoverlay"
+        ".config/Signal"
+        ".config/unityhub"
+
+        "Unity"
+        "Zomboid"
 
         ".local/share/zsh"
         ".local/share/Trash"
         ".local/share/direnv"
         ".local/share/Steam"
-        ".local/share/in.cinny.app"
+        # ".local/share/in.cinny.app" # deleted
         ".local/share/Celeste/Saves"
         ".local/share/qBittorrent"
         ".local/state/wireplumber"
         ".local/share/PrismLauncher"
+        ".local/share/nushell"
+        ".local/share/lutris"
+        ".local/share/anime-game-launcher"
+        ".local/share/kwalletd" # for signal
+        ".local/share/Colossal Order" # cities skylines
 
         {
           directory = ".gnupg";
@@ -86,9 +104,7 @@
           mode = "0700";
         }
       ];
-      files = [
-        ".local/share/nushell/history"
-      ];
+      files = [];
     };
   };
 

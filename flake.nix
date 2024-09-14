@@ -2,104 +2,139 @@
   description = ":3";
 
   inputs = {
+    # nixpkgs.url = "github:nixos/nixpkgs?rev=e9ee548d90ff586a6471b4ae80ae9cfcbceb3420"; # TODO: change to nixos-unstable
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     impermanence.url = "github:nix-community/impermanence";
 
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    catppuccin.url = "github:catppuccin/nix";
 
-    firefox = {
-      url = "github:nix-community/flake-firefox-nightly?rev=34aa87ff6a3f23fd17cc901f5a19d061cc1c46b3";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    aagl.url = "github:ezKEa/aagl-gtk-on-nix";
+    aagl.inputs.nixpkgs.follows = "nixpkgs";
 
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    plasma-manager.url = "github:nix-community/plasma-manager";
+    plasma-manager.inputs.nixpkgs.follows = "nixpkgs";
+    plasma-manager.inputs.home-manager.follows = "home-manager";
+
+    firefox.url = "github:nix-community/flake-firefox-nightly?rev=38cb4904ef9781cb4e6167a000fb3772bc4dcf05";
+    firefox.inputs.nixpkgs.follows = "nixpkgs";
+
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
+    deploy-rs.url = "github:serokell/deploy-rs";
+    deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
     self,
     nixpkgs,
     home-manager,
-    plasma-manager,
+    aagl,
     disko,
+    deploy-rs,
     ...
   } @ inputs: let
     inherit (self) outputs;
-    # Supported systems for your flake packages, shell, etc.
     systems = [
-      # "aarch64-linux"
-      # "i686-linux"
-      "x86_64-linux" # i think this is the only one i need?
-      # "aarch64-darwin"
-      # "x86_64-darwin"
+      "aarch64-linux"
+      "x86_64-linux"
+      "aarch64-darwin"
+      "x86_64-darwin"
     ];
-    # This is a function that generates an attribute by calling a function you
-    # pass to it, with each system as an argument
     forAllSystems = nixpkgs.lib.genAttrs systems;
   in {
     devShells = forAllSystems (
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
-      in
-        import ./shell.nix {inherit pkgs;}
+      in {
+        default = pkgs.mkShell {
+          NIX_CONFIG = "experimental-features = nix-command flakes";
+          nativeBuildInputs = with pkgs; [nix nil git alejandra git-crypt pkgs.deploy-rs];
+        };
+      }
     );
 
-    # Your custom packages
-    # Acessible through 'nix build', 'nix shell', etc
     packages = forAllSystems (
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
       in
         import ./pkgs {inherit pkgs;}
     );
-    # Formatter for your nix files, available through 'nix fmt'
-    # Other options beside 'alejandra' include 'nixpkgs-fmt'
+
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
-
-    # Your custom packages and modifications, exported as overlays
     overlays = import ./overlays {inherit inputs;};
+    checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+    # nixosModules = import ./modules/nixos;
+    # homeManagerModules = import ./modules/home-manager;
 
-    # TODO: figure out if i need these
-    # Reusable nixos modules you might want to export
-    # These are usually stuff you would upstream into nixpkgs
-    nixosModules = import ./modules/nixos;
-    # Reusable home-manager modules you might want to export
-    # These are usually stuff you would upstream into home-manager
-    homeManagerModules = import ./modules/home-manager;
+    deploy.nodes = let
+      mkNode = hostname: config: system: {
+        hostname = hostname;
+        sshUser = "root";
 
-    # NixOS configuration entrypoint
-    # Available through 'nixos-rebuild --flake .#your-hostname'
+        profiles.system.path = deploy-rs.lib.${system}.activate.nixos self.nixosConfigurations.${config};
+      };
+    in {
+      molly = mkNode "192.168.1.231" "molly" "x86_64-linux";
+    };
+
     nixosConfigurations = {
-      strawberry = nixpkgs.lib.nixosSystem {
+      saturday = nixpkgs.lib.nixosSystem {
         specialArgs = {
           inherit inputs outputs;
           me = import ./identities/user.nix;
         };
         modules = [
-          # > Our main nixos configuration file <
           disko.nixosModules.disko
-          (import ./hosts/strawberry/configuration.nix)
+          inputs.catppuccin.nixosModules.catppuccin
+          (import ./hosts/saturday/configuration.nix)
+          {
+            home-manager.users.user = {
+              imports = [
+                inputs.catppuccin.homeManagerModules.catppuccin
+                inputs.plasma-manager.homeManagerModules.plasma-manager
+              ];
+            };
+          }
+        ];
+      };
+      molly = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs outputs;
+          me = import ./identities/user.nix;
+        };
+        modules = [
+          disko.nixosModules.disko
+          (import ./hosts/molly/configuration.nix)
         ];
       };
     };
 
-    # Standalone home-manager configuration entrypoint
-    # Available through 'home-manager --flake .#your-username@your-hostname'
     homeConfigurations = {
-      "user@strawberry" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
+      "user@saturday" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
         extraSpecialArgs = {
           inherit inputs outputs;
           me = import ./identities/user.nix;
         };
         modules = [
-          (import ./homes/strawberry)
+          inputs.catppuccin.homeManagerModules.catppuccin
+          inputs.plasma-manager.homeManagerModules.plasma-manager
+          (import ./homes/saturday)
+        ];
+      };
+      "user@molly" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        extraSpecialArgs = {
+          inherit inputs outputs;
+          me = import ./identities/user.nix;
+        };
+        modules = [
+          (import ./homes/molly)
         ];
       };
     };

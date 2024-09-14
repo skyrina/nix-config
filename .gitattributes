@@ -1,2 +1,3 @@
-hosts/strawberry/keys/** filter=git-crypt diff=git-crypt
+hosts/common/nya-ca.pem filter=git-crypt diff=git-crypt
+hosts/saturday/keys/** filter=git-crypt diff=git-crypt
 secrets/** filter=git-crypt diff=git-crypt

@@ -13,6 +13,9 @@
           "widget.use-xdg-desktop-portal.file-picker" = 1;
         };
       };
+      Old = {
+        id = 1;
+      };
     };
   };
 }

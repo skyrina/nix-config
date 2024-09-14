@@ -6,10 +6,9 @@
 }: {
   imports = [
     ../programs/nushell
-    ../programs/starship.nix
     ../programs/firefox
-    ../programs/alacritty
     ../programs/factorio
+    ./plasma.nix
   ];
 
   nixpkgs = {
@@ -29,47 +28,49 @@
     homeDirectory = "/home/user";
     shellAliases = nixosConfig.environment.shellAliases;
     packages = with pkgs; [
-      (pkgs.discord.override {
-        withVencord = true;
-      })
+      (pkgs.discord.override {withVencord = true;})
       vesktop
-      cinny-desktop
+      element-desktop
 
       # TODO: figure out if having a global installation of rustup and gcc is bad
       rustup
       gcc
 
+      bun
+
       git-crypt
       ncdu
 
-      wineWowPackages.stable
+      wineWowPackages.unstableFull
 
       qbittorrent
 
       vscode
+      android-studio # TODO: add to impermanence
       jetbrains.idea-community
       jetbrains.datagrip
 
       (steam.override {
-        # fix for tf2
-        extraLibraries = pkgs: [pkgs.gperftools];
+        extraLibraries = pkgs: [pkgs.gperftools pkgs.mono]; # gperftools: tf2
+        extraPkgs = pkgs: [pkgs.gamescope pkgs.mono]; # mono: cities skylines 1
       })
       steam-run
       prismlauncher
 
-      blender
       aseprite # TODO: make the config file declarative
-      osu-lazer
       keepassxc
       r2modman
-      yubikey-personalization
-      yubikey-manager-qt
-      nix-output-monitor
+      lutris
 
-      noto-fonts
-      noto-fonts-cjk-sans
-      noto-fonts-color-emoji
-      catppuccin-cursors.mochaDark
+      blender
+      unityhub
+
+      youtube-music
+      # yubikey-personalization
+      # yubikey-manager-qt
+      # wlx-overlay-s
+      # monero-gui
+      signal-desktop
     ];
   };
 
@@ -79,15 +80,14 @@
     enableBashIntegration = true;
   };
 
-  # temp fix until https://github.com/nix-community/home-manager/issues/4804 is fixed
-  services.gpg-agent.pinentryFlavor = "qt";
-
   services.gnome-keyring.enable = true;
 
-  services.kdeconnect = {
-    enable = true;
-    indicator = true;
-  };
+  # services.kdeconnect = {
+  #   enable = true;
+  #   indicator = true;
+  # };
+
+  services.arrpc.enable = true;
 
   programs.home-manager.enable = true;
   programs.git = {
@@ -103,12 +103,49 @@
     enableNushellIntegration = true;
   };
 
+  programs.mpv = {
+    enable = true;
+    catppuccin.enable = true;
+  };
+
+  programs.btop = {
+    enable = true;
+    catppuccin.enable = true;
+  };
+
+  programs.obs-studio.enable = true;
+
+  programs.alacritty = {
+    enable = true;
+    catppuccin.enable = true;
+    settings = {
+      font.size = 10;
+    };
+  };
+
+  programs.starship = {
+    enable = true;
+    catppuccin.enable = true;
+    settings = {
+      add_newline = false;
+
+      character = {
+        success_symbol = "[➜](bold green)";
+        error_symbol = "[➜](bold red)";
+      };
+
+      nix_shell.format = "in [nix shell]($style) ";
+    };
+  };
+
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
       autoconnect = ["qemu:///system"];
       uris = ["qemu:///system"];
     };
   };
+
+  xdg.enable = true;
 
   # nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
