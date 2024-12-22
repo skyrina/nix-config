@@ -9,6 +9,7 @@
     ./hardware-configuration.nix
     ./disks.nix
     ./users.nix
+    ./kubernetes.nix
     ../common/nix.nix
     ./impermanence.nix
     ../common/ca.nix
@@ -17,7 +18,10 @@
   networking.hostName = "molly";
   networking.firewall.enable = false;
   networking.networkmanager.enable = true;
-  networking.nameservers = ["127.0.0.1"];
+  networking.nameservers = ["192.168.1.231"];
+
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
 
   time.timeZone = "Europe/Bucharest";
   i18n.defaultLocale = "en_US.UTF-8";

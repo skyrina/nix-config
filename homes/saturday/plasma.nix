@@ -14,16 +14,16 @@
     enable = true;
     input.mice = [
       {
-        acceleration = -0.60;
+        acceleration = -0.50;
         accelerationProfile = "none";
         enable = true;
         leftHanded = false;
         middleButtonEmulation = false;
-        name = "Razer Razer Viper";
+        name = "Keychron Keychron 4K Link";
         naturalScroll = false;
-        productId = "0078";
+        productId = "3434";
         scrollSpeed = 1;
-        vendorId = "1532";
+        vendorId = "d038";
       }
     ];
     kwin.effects.blur.enable = true;

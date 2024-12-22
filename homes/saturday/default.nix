@@ -87,7 +87,7 @@
   #   indicator = true;
   # };
 
-  services.arrpc.enable = true;
+  # services.arrpc.enable = true;
 
   programs.home-manager.enable = true;
   programs.git = {
@@ -103,21 +103,19 @@
     enableNushellIntegration = true;
   };
 
-  programs.mpv = {
-    enable = true;
-    catppuccin.enable = true;
-  };
+  catppuccin.accent = "red";
+  catppuccin.mpv.enable = true;
+  catppuccin.btop.enable = true;
+  catppuccin.alacritty.enable = true;
+  catppuccin.starship.enable = true;
+  # catppuccin.cursors.enable = true;
 
-  programs.btop = {
-    enable = true;
-    catppuccin.enable = true;
-  };
-
+  programs.mpv.enable = true;
+  programs.btop.enable = true;
   programs.obs-studio.enable = true;
 
   programs.alacritty = {
     enable = true;
-    catppuccin.enable = true;
     settings = {
       font.size = 10;
     };
@@ -125,7 +123,6 @@
 
   programs.starship = {
     enable = true;
-    catppuccin.enable = true;
     settings = {
       add_newline = false;
 

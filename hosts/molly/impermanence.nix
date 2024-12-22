@@ -15,6 +15,23 @@
       "/var/lib/systemd/coredump"
       "/etc/NetworkManager/system-connections"
       "/var/lib/docker"
+      "/var/lib/nomad" # TODO: remove
+
+      # kubernetes
+      "/var/lib/containerd"
+      "/var/lib/rancher/k3s"
+
+      # TODO: delete all of these (check last modified first tho, 19/11/24)
+      # "/var/lib/kubernetes"
+      # "/var/lib/kubelet"
+      # "/etc/kube-flannel"
+      # "/etc/kubernetes"
+      # "/var/lib/etcd"
+      # {
+      #   directory = "/var/lib/cfssl";
+      #   user = "cfssl";
+      #   group = "cfssl";
+      # }
     ];
     files = [
       "/etc/machine-id"

@@ -24,7 +24,7 @@
         me.pubkeys.saturday
         me.pubkeys.phone
       ];
-      extraGroups = ["wheel" "docker" "caddy"];
+      extraGroups = ["wheel" "docker" "caddy" "kubernetes"];
     };
   };
 }

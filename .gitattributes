@@ -1,3 +1,4 @@
 hosts/common/nya-ca.pem filter=git-crypt diff=git-crypt
 hosts/saturday/keys/** filter=git-crypt diff=git-crypt
 secrets/** filter=git-crypt diff=git-crypt
+pkgs/PPNikkeiJournal.zip filter=git-crypt diff=git-crypt

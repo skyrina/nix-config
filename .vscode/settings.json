@@ -1,22 +1,21 @@
 {
 	"nix.enableLanguageServer": true,
-	"nix.serverPath": "nil",
+	"nix.serverPath": "nixd",
 	"nix.serverSettings": {
-		"nil": {
+		"nixd": {
 			"formatting": {
 				"command": [
 					"alejandra"
 				]
 			},
-			"nix": {
-				"binary": "nix",
-				"maxMemoryMB": null,
-				"flake": {
-					"autoArchive": null,
-					"autoEvalInputs": true,
-					"nixpkgsInputName": "nixpkgs",
+			"options": {
+				"nixos": {
+					"expr": "(builtins.getFlake \"/etc/nixos/flake.nix\").nixosConfigurations.saturday.options"
 				},
-			},
+				"home-manager": {
+					"expr": "(builtins.getFlake \"/etc/nixos/flake.nix\").homeConfigurations.\"user@saturday\".options"
+				}
+			}
 		}
 	}
 }

@@ -5,6 +5,9 @@
     # nixpkgs.url = "github:nixos/nixpkgs?rev=e9ee548d90ff586a6471b4ae80ae9cfcbceb3420"; # TODO: change to nixos-unstable
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    nix-gaming.url = "github:fufexan/nix-gaming";
+    nix-gaming.inputs.nixpkgs.follows = "nixpkgs";
+
     impermanence.url = "github:nix-community/impermanence";
 
     catppuccin.url = "github:catppuccin/nix";
@@ -19,7 +22,7 @@
     plasma-manager.inputs.nixpkgs.follows = "nixpkgs";
     plasma-manager.inputs.home-manager.follows = "home-manager";
 
-    firefox.url = "github:nix-community/flake-firefox-nightly?rev=38cb4904ef9781cb4e6167a000fb3772bc4dcf05";
+    firefox.url = "github:nix-community/flake-firefox-nightly?rev=d442478b1c0e0d89dad9072e75d593c061554c04";
     firefox.inputs.nixpkgs.follows = "nixpkgs";
 
     disko.url = "github:nix-community/disko";
@@ -33,7 +36,6 @@
     self,
     nixpkgs,
     home-manager,
-    aagl,
     disko,
     deploy-rs,
     ...
@@ -53,7 +55,7 @@
       in {
         default = pkgs.mkShell {
           NIX_CONFIG = "experimental-features = nix-command flakes";
-          nativeBuildInputs = with pkgs; [nix nil git alejandra git-crypt pkgs.deploy-rs];
+          nativeBuildInputs = with pkgs; [nix nixd git alejandra git-crypt pkgs.deploy-rs];
         };
       }
     );

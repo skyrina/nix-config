@@ -17,6 +17,7 @@
       "/etc/NetworkManager/system-connections"
       "/var/lib/libvirt"
       "/var/lib/docker"
+      "/var/lib/ollama"
       {
         directory = "/var/lib/archisteamfarm";
         user = "archisteamfarm";
@@ -78,6 +79,7 @@
 
         ".local/share/zsh"
         ".local/share/Trash"
+        ".local/share/waydroid"
         ".local/share/direnv"
         ".local/share/Steam"
         # ".local/share/in.cinny.app" # deleted

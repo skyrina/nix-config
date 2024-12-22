@@ -10,6 +10,7 @@
   imports = [
     inputs.home-manager.nixosModules.home-manager
     inputs.aagl.nixosModules.default
+    inputs.nix-gaming.nixosModules.pipewireLowLatency
     ./disks.nix
     ./hardware-configuration.nix
     ./impermanence.nix
@@ -55,27 +56,20 @@
   boot.kernelParams = [
     "pcie_port_pm=off" # pcie power management issues on the x670e-e motherboard leading to random network disconnects
     "pcie_aspm.policy=performance" # this might not be needed
+    # "radeon.dpm=0" # flickering
+    # "amdgpu.sg_display=0" # flickering attempt 2
+    # "amdgpu.dcdebugmask=0x612" # flickering attempt 3
+    # "amdgpu.dcdebugmask=0x10" # flickering attempt 4, disable panel self refresh
   ];
-
-  # hardcode rocm files, from https://wiki.nixos.org/wiki/AMD_GPU#HIP
-  systemd.tmpfiles.rules = let
-    rocmEnv = pkgs.symlinkJoin {
-      name = "rocm-combined";
-      paths = with pkgs.rocmPackages; [
-        rocblas
-        hipblas
-        clr
-      ];
-    };
-  in [
-    "L+    /opt/rocm   -    -    -     -    ${rocmEnv}"
-  ];
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # boot.kernelPackages = pkgs.linuxKernel.packages.linux_zen;
+  # boot.kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_stable;
 
   zramSwap.enable = true;
 
-  # hardware.amdgpu.amdvlk.enable = true; # i think this is enabled by default? check nix-inspect
   hardware.amdgpu.initrd.enable = true;
   hardware.amdgpu.opencl.enable = true;
+  # hardware.amdgpu.amdvlk.enable = true;
   hardware.graphics.enable = true;
   hardware.graphics.enable32Bit = true;
 
@@ -104,9 +98,26 @@
 
     # pi pico serial
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="b00b", ATTRS{idProduct}=="cafe", MODE="0666"
+
+    # wemos d1 mini
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE="0666"
+
+    # try to fix artifacts by forcing it to performance/high
+    KERNEL=="card1", SUBSYSTEM=="drm", DRIVERS=="amdgpu", ATTR{device/power_dpm_force_performance_level}="high"
   '';
 
-  services.pcscd.enable = true;
+  systemd.services.artifactWorkaround = {
+    description = "Reset GPU power performance level on resume as a workaround for screen artifacts";
+    wantedBy = ["post-resume.target"];
+    after = ["post-resume.target"];
+
+    script = ''
+      echo auto > /sys/class/drm/card1/device/power_dpm_force_performance_level
+      echo high > /sys/class/drm/card1/device/power_dpm_force_performance_level
+    '';
+
+    serviceConfig.Type = "oneshot";
+  };
 
   security.pam.services = {
     login.u2fAuth = false;
@@ -138,8 +149,9 @@
     noto-fonts
     noto-fonts-cjk-sans
     noto-fonts-color-emoji
-    (nerdfonts.override {fonts = ["FiraCode" "DroidSansMono"];})
+    # (nerdfonts.override {fonts = ["FiraCode" "DroidSansMono"];})
     cozette
+    pp-nikkei-journal
   ];
 
   hardware.opentabletdriver.enable = true;
@@ -166,9 +178,6 @@
 
   # fix for tf2
   environment.systemPackages = with pkgs; [pkgsi686Linux.gperftools];
-
-  # TODO: attempt to make steam downloads faster, remove if no worky
-  # services.dnsmasq.enable = true;
 
   services.hardware.openrgb = {
     enable = true;
@@ -202,6 +211,12 @@
     alsa.support32Bit = true;
     pulse.enable = true;
     jack.enable = true;
+
+    lowLatency = {
+      enable = true;
+      quantum = 64;
+      rate = 48000;
+    };
   };
 
   services.syncthing = {
@@ -224,6 +239,27 @@
     };
   };
 
+  services.ollama = {
+    enable = true;
+    acceleration = "rocm";
+    rocmOverrideGfx = "11.0.0";
+    # package = let
+    #   version = "0.5.1";
+    # in
+    #   pkgs.ollama.overrideAttrs (old: {
+    #     version = version;
+
+    #     src = pkgs.fetchFromGitHub {
+    #       owner = "ollama";
+    #       repo = "ollama";
+    #       rev = "v${version}";
+    #       hash = "sha256-llsK/rMK1jf2uneqgon9gqtZcbC9PuCDxoYfC7Ta6PY=";
+    #       fetchSubmodules = true;
+    #     };
+    #   });
+  };
+  systemd.services.ollama.serviceConfig.DynamicUser = lib.mkForce false;
+
   services.archisteamfarm.enable = true;
   services.archisteamfarm.web-ui.enable = true;
 
@@ -237,14 +273,13 @@
   programs.anime-game-launcher.enable = true;
 
   virtualisation.docker.enable = true;
-  virtualisation = {
-    libvirtd = {
-      enable = true;
-      qemu.ovmf.enable = true;
-      qemu.ovmf.packages = [pkgs.OVMFFull.fd];
-      qemu.swtpm.enable = true;
-    };
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu.ovmf.enable = true;
+    qemu.ovmf.packages = [pkgs.OVMFFull.fd];
+    qemu.swtpm.enable = true;
   };
+  virtualisation.waydroid.enable = true;
   programs.virt-manager.enable = true;
 
   environment.etc = {
@@ -257,7 +292,8 @@
     };
   };
 
-  console.catppuccin.enable = true;
+  catppuccin.accent = "red";
+  catppuccin.tty.enable = true;
 
   security.rtkit.enable = true;
 

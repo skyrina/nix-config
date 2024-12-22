@@ -5,17 +5,9 @@
       package = pkgs.eb-garamond;
       name = "EB Garamond";
     };
-    sansSerif = {
-      package = pkgs.geist-font-sans;
-      name = "Geist";
-    };
     emoji = {
       package = pkgs.twitter-color-emoji;
       name = "Twitter Color Emoji";
-    };
-    monospace = {
-      package = pkgs.geist-font-mono;
-      name = "Geist Mono Code";
     };
   };
 
@@ -27,7 +19,6 @@
 
       defaultFonts = {
         sansSerif = [
-          "Geist"
           "Noto Sans CJK SC"
           "Twitter Color Emoji"
           "Symbols Nerd Font"
@@ -39,7 +30,6 @@
           "Symbols Nerd Font"
         ];
         monospace = [
-          "Geist Mono Code"
           "Noto Sans Mono CJK SC"
           "Twitter Color Emoji"
           "Symbols Nerd Font Mono"

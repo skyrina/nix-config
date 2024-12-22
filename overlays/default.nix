@@ -10,15 +10,8 @@
     # example = prev.example.overrideAttrs (oldAttrs: rec {
     # ...
     # });
+    gtk4 = prev.gtk4.overrideAttrs (oldAttrs: {
+      patches = oldAttrs.patches or [] ++ [./fixgtk4cursor.patch];
+    });
   };
-
-  # TODO: make this stable-packages instead? mia might have it in her config
-  # When applied, the unstable nixpkgs set (declared in the flake inputs) will
-  # be accessible through 'pkgs.unstable'
-  # unstable-packages = final: _prev: {
-  #   unstable = import inputs.nixpkgs-unstable {
-  #     system = final.system;
-  #     config.allowUnfree = true;
-  #   };
-  # };
 }
